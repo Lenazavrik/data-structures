@@ -1,0 +1,192 @@
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+struct Node
+{
+    int data;
+    Node *left;
+    Node *right;
+};
+
+//Drosais datu ievads mezglam
+int safeInputNode(Node *newNode) {
+    while (true) {
+        cout << "Enter the number to add: ";
+        cin >> newNode->data;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\nYou entered incorrect data, please try again!\n";
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return newNode->data;
+        }
+    }
+}
+
+//Drosais datu ievads int
+int safeInputInt() {
+    int value;
+    while (true) {
+        cin >> value;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\nInvalid input, please enter a number!\n";
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return value;
+        }
+    }
+}
+
+//Create Node
+Node *createNode(){
+    Node *newNode;
+    newNode=new Node;
+    safeInputNode(newNode);
+    newNode->left=NULL;
+    newNode->right=NULL;
+    return newNode;
+}
+
+//Ekrana tirisana
+void clearScreen() {
+    cout << "\033[2J\033[1;1H";
+}
+
+void pauseScreen() {
+    cout << "\nPlease click 'Enter' to continue\n";;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
+void printTree(Node *cur){
+    if(!cur) return;
+    printTree (cur->left);
+    cout<<cur->data<<" ";
+    printTree(cur->right);
+}
+
+//Adding an element
+Node *addElement(Node *root){
+    Node *newNode, *cur;
+    cur=root;
+    newNode=createNode();
+    while (true)
+    {
+        if(cur->data>newNode->data){
+            if(cur->left==NULL){
+                cur->left=newNode;
+                return root;
+            } else cur=cur->left;
+        } else{
+            if(cur->right==NULL){
+                cur->right=newNode;
+                return root;
+            } else cur=cur->right;
+        }
+    }
+    return root;
+}
+
+//Searching for an element
+void search(Node *root){
+    cout<<"\nYour elements: ";
+    printTree(root);
+
+    cout<<"\nPut which element to search: ";
+    int choice=safeInputInt();
+
+    Node *cur;
+    cur=root;
+
+    while (cur != NULL && cur->data != choice)
+    {
+        if (choice < cur->data)
+            cur = cur->left;
+        else
+            cur = cur->right;
+    }
+
+    if (cur == NULL)
+        cout << "\nThe element wasn't found!\n";
+    else
+        cout << "\nThe element was found!\n";
+    
+}
+
+int main(){
+    Node *root=NULL; //adrese tipa Node, kura saucas head
+    int choice;
+
+    do{
+        clearScreen();
+        cout<<"\nAutors: Vladlena Klimova\n";
+        cout<<"\nSelect action: ";
+        cout<<"\n1. Creating and outputting the root of a tree";//
+        cout<<"\n2. Adding an element";//
+        cout<<"\n3. Searching for an element";//
+        cout<<"\n4. Deleting an element";
+        cout<<"\n5. Printing the tree";//
+        cout<<"\n6. Traversing the tree (preorder, inorder, postorder)";
+        cout<<"\n7. Determining the number of elements";
+        cout<<"\n8. Rotating the tree";
+        cout<<"\n9. Finish the program";//
+
+        cout << "\nSelect action: ";
+        choice=safeInputInt();
+
+        switch (choice)
+        {
+        case 1:
+            if(!root){
+                root=createNode();
+            } else{
+                cout<<"\nRoot already exists: "<<root->data;
+                cout<<endl;
+            }
+        break;
+
+        case 2:
+            if(!root){
+                root=createNode();
+            } else{
+                root=addElement(root);
+                cout<<"\nYour elements: ";
+                printTree(root);
+            }
+        break;
+
+        case 3:
+            if(!root){
+                root=createNode();
+            } else{
+                search(root);
+            }
+        break;
+
+        case 5:
+        if(!root){
+            root=createNode();
+        } else{
+            cout<<"\nYour elements: ";
+            printTree(root);
+        }
+        break;
+        
+        case 9:
+            cout<<"\nThe program is over!\n";
+        break;
+
+        default:
+            cout<<"\nYou entered incorrect data, please try again!\n";
+        break;
+        }
+        if(choice!=9) pauseScreen();
+    } while (choice!=9);
+    
+    return 0;
+}
