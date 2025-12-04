@@ -118,6 +118,36 @@ void search(Node *root){
     
 }
 
+Node* findMin(Node* root) {
+    while (root->left != NULL)
+        root = root->left;
+    return root;
+} //atrast minimalo elementu ja ir 2 berni
+
+Node* deleteAnElement(Node *root, int inputElement){
+    if (inputElement < root->data) root->left = deleteAnElement(root->left, inputElement);
+    else if (inputElement > root->data) root->right = deleteAnElement(root->right, inputElement);
+    else {
+        // mezgls ir atrasts
+        if (root->left == NULL) {
+            Node* temp = root->right;
+            delete root;
+            return temp;
+        } else if (root->right == NULL) {
+            Node* temp = root->left;
+            delete root;
+            return temp;
+        }
+
+        //ja ir 2 berni
+        Node* temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteAnElement(root->right, temp->data);
+    }
+    return root;
+    
+}
+
 int main(){
     Node *root=NULL; //adrese tipa Node, kura saucas head
     int choice;
@@ -129,7 +159,7 @@ int main(){
         cout<<"\n1. Creating and outputting the root of a tree";//
         cout<<"\n2. Adding an element";//
         cout<<"\n3. Searching for an element";//
-        cout<<"\n4. Deleting an element";
+        cout<<"\n4. Deleting an element";//
         cout<<"\n5. Printing the tree";//
         cout<<"\n6. Traversing the tree (preorder, inorder, postorder)";
         cout<<"\n7. Determining the number of elements";
@@ -165,6 +195,21 @@ int main(){
                 root=createNode();
             } else{
                 search(root);
+            }
+        break;
+
+        case 4:
+            if(!root){
+                cout<<"\nYou don't have any elements!";
+            } else {
+                cout<<"\nYour elements: ";
+                printTree(root);
+                int inputElement;
+                cout<<"\nWhich element do you want to delete: ";
+                inputElement = safeInputInt();
+                deleteAnElement(root, inputElement);
+                cout<<"\nYour elements: ";
+                printTree(root);
             }
         break;
 
