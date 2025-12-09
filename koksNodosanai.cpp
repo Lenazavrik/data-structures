@@ -44,7 +44,8 @@ int safeInputInt() {
 }
 
 //Create Node
-Node *createNode(){
+Node *createNode(int &elCount){
+    elCount+=1;
     Node *newNode;
     newNode=new Node;
     safeInputNode(newNode);
@@ -71,10 +72,10 @@ void printTree(Node *cur){
 }
 
 //Adding an element
-Node *addElement(Node *root){
+Node *addElement(Node *root, int &elCount){
     Node *newNode, *cur;
     cur=root;
-    newNode=createNode();
+    newNode=createNode(elCount);
     while (true)
     {
         if(cur->data>newNode->data){
@@ -124,9 +125,9 @@ Node* findMin(Node* root) {
     return root;
 } //atrast minimalo elementu ja ir 2 berni
 
-Node* deleteAnElement(Node *root, int inputElement){
-    if (inputElement < root->data) root->left = deleteAnElement(root->left, inputElement);
-    else if (inputElement > root->data) root->right = deleteAnElement(root->right, inputElement);
+Node* deleteAnElement(Node *root, int inputElement, int &elCount){
+    if (inputElement < root->data) root->left = deleteAnElement(root->left, inputElement, elCount);
+    else if (inputElement > root->data) root->right = deleteAnElement(root->right, inputElement, elCount);
     else {
         // mezgls ir atrasts
         if (root->left == NULL) {
@@ -142,15 +143,38 @@ Node* deleteAnElement(Node *root, int inputElement){
         //ja ir 2 berni
         Node* temp = findMin(root->right);
         root->data = temp->data;
-        root->right = deleteAnElement(root->right, temp->data);
+        root->right = deleteAnElement(root->right, temp->data, elCount);
     }
     return root;
     
 }
 
+//Preorder
+void preorder(Node *cur){
+    if(!cur) return;
+    cout << cur->data << " ";
+    preorder(cur->left);
+    preorder(cur->right);
+}
+
+//Postorder
+void postorder(Node *cur){
+    if(!cur) return;
+    postorder(cur->left);
+    postorder(cur->right);
+    cout << cur->data << " ";
+}
+
+//Determining the number of elements
+void elementCount(int &elCount){
+    cout<<"\nYou have "<<elCount<<" elements in your tree";
+}
+
+
 int main(){
     Node *root=NULL; //adrese tipa Node, kura saucas head
     int choice;
+    int elCount=0;
 
     do{
         clearScreen();
@@ -161,8 +185,8 @@ int main(){
         cout<<"\n3. Searching for an element";//
         cout<<"\n4. Deleting an element";//
         cout<<"\n5. Printing the tree";//
-        cout<<"\n6. Traversing the tree (preorder, inorder, postorder)";
-        cout<<"\n7. Determining the number of elements";
+        cout<<"\n6. Traversing the tree (preorder, inorder, postorder)";//
+        cout<<"\n7. Determining the number of elements";//
         cout<<"\n8. Rotating the tree";
         cout<<"\n9. Finish the program";//
 
@@ -173,7 +197,7 @@ int main(){
         {
         case 1:
             if(!root){
-                root=createNode();
+                root=createNode(elCount);
             } else{
                 cout<<"\nRoot already exists: "<<root->data;
                 cout<<endl;
@@ -182,9 +206,9 @@ int main(){
 
         case 2:
             if(!root){
-                root=createNode();
+                root=createNode(elCount);
             } else{
-                root=addElement(root);
+                root=addElement(root, elCount);
                 cout<<"\nYour elements: ";
                 printTree(root);
             }
@@ -192,7 +216,7 @@ int main(){
 
         case 3:
             if(!root){
-                root=createNode();
+                root=createNode(elCount);
             } else{
                 search(root);
             }
@@ -207,7 +231,8 @@ int main(){
                 int inputElement;
                 cout<<"\nWhich element do you want to delete: ";
                 inputElement = safeInputInt();
-                deleteAnElement(root, inputElement);
+                root = deleteAnElement(root, inputElement, elCount);
+                elCount-=1;
                 cout<<"\nYour elements: ";
                 printTree(root);
             }
@@ -215,12 +240,29 @@ int main(){
 
         case 5:
         if(!root){
-            root=createNode();
+            root=createNode(elCount);
         } else{
             cout<<"\nYour elements: ";
             printTree(root);
         }
         break;
+
+        case 6:
+        if(!root){
+            root=createNode(elCount);
+        } else {
+            cout<<"\nYour elements (Inorder): ";
+            printTree(root);
+            cout<<"\nYour elements (Preorder): ";
+            preorder(root);
+            cout<<"\nYour elements (Postorder): ";
+            postorder(root);
+        }
+        break;
+
+        case 7:
+            elementCount(elCount);
+        break; 
         
         case 9:
             cout<<"\nThe program is over!\n";
