@@ -9,6 +9,8 @@ struct Node
     Node *right;
 };
 
+void rotateTree(Node *root);
+
 //Drosais datu ievads mezglam
 int safeInputNode(Node *newNode) {
     while (true) {
@@ -73,6 +75,7 @@ void printTree(Node *cur){
 
 //Adding an element
 Node *addElement(Node *root, int &elCount){
+
     Node *newNode, *cur;
     cur=root;
     newNode=createNode(elCount);
@@ -90,6 +93,7 @@ Node *addElement(Node *root, int &elCount){
             } else cur=cur->right;
         }
     }
+
     return root;
 }
 
@@ -125,7 +129,10 @@ Node* findMin(Node* root) {
     return root;
 } //atrast minimalo elementu ja ir 2 berni
 
+//Deleting an element
 Node* deleteAnElement(Node *root, int inputElement, int &elCount){
+
+    if (root == NULL ) return NULL; 
     if (inputElement < root->data) root->left = deleteAnElement(root->left, inputElement, elCount);
     else if (inputElement > root->data) root->right = deleteAnElement(root->right, inputElement, elCount);
     else {
@@ -145,6 +152,7 @@ Node* deleteAnElement(Node *root, int inputElement, int &elCount){
         root->data = temp->data;
         root->right = deleteAnElement(root->right, temp->data, elCount);
     }
+
     return root;
     
 }
@@ -170,11 +178,22 @@ void elementCount(int &elCount){
     cout<<"\nYou have "<<elCount<<" elements in your tree";
 }
 
+//Rotating the tree
+void rotateTree(Node *root){
+    if (root == NULL) return;
+    Node* temp = root->left;
+    root->left = root->right;
+    root->right = temp;
+
+    rotateTree(root->left);
+    rotateTree(root->right);
+}
 
 int main(){
     Node *root=NULL; //adrese tipa Node, kura saucas head
     int choice;
     int elCount=0;
+    int rotate = 0;
 
     do{
         clearScreen();
@@ -206,9 +225,18 @@ int main(){
 
         case 2:
             if(!root){
+                cout<<"\nYou don't have a root! Please, enter a number!\n";
                 root=createNode(elCount);
             } else{
+                    
+            if(rotate%2!=0){
+                rotateTree(root);
+            }
                 root=addElement(root, elCount);
+
+                if(rotate%2!=0){
+                    rotateTree(root);
+                }
                 cout<<"\nYour elements: ";
                 printTree(root);
             }
@@ -216,6 +244,7 @@ int main(){
 
         case 3:
             if(!root){
+                cout<<"\nYou don't have a root! Please, enter a number!\n";
                 root=createNode(elCount);
             } else{
                 search(root);
@@ -231,7 +260,15 @@ int main(){
                 int inputElement;
                 cout<<"\nWhich element do you want to delete: ";
                 inputElement = safeInputInt();
+
+                if(rotate%2!=0){
+                    rotateTree(root);
+                }
                 root = deleteAnElement(root, inputElement, elCount);
+
+                if(rotate%2!=0){
+                    rotateTree(root);
+                }
                 elCount-=1;
                 cout<<"\nYour elements: ";
                 printTree(root);
@@ -240,6 +277,7 @@ int main(){
 
         case 5:
         if(!root){
+            cout<<"\nYou don't have a root! Please, enter a number!\n";
             root=createNode(elCount);
         } else{
             cout<<"\nYour elements: ";
@@ -249,6 +287,7 @@ int main(){
 
         case 6:
         if(!root){
+            cout<<"\nYou don't have a root! Please, enter a number!\n";
             root=createNode(elCount);
         } else {
             cout<<"\nYour elements (Inorder): ";
@@ -263,6 +302,19 @@ int main(){
         case 7:
             elementCount(elCount);
         break; 
+
+        case 8:
+            if(!root){
+                cout<<"\nYou don't have a root! Please, enter a number!\n";
+                root=createNode(elCount);
+            } else {
+                rotateTree(root);
+                rotate+=1;
+                cout << "\nThe tree has been rotated!\n";
+                cout<<"\nYour elements: ";
+                printTree(root);              
+            }
+        break;
         
         case 9:
             cout<<"\nThe program is over!\n";
