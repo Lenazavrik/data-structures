@@ -1,0 +1,29 @@
+# macOS
+.DS_Store
+*.dSYM/
+
+# Compiled files
+*.o
+*.obj
+*.out
+*.exe
+a.out
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+
+# Build directories
+build/
+cmake-build-*/
+
+# Original local executable names
+/deks
+/koks
+/koksNodosanai
+/linearaisNew
+/linearaisNodosanai
+/linearaisSaraksts
+/rinda
+/steks
